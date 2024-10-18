@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ChangdiDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.changdi_name as changdiName
+        ,a.changdi_uuid_number as changdiUuidNumber
+        ,a.changdi_photo as changdiPhoto
+        ,a.changdi_address as changdiAddress
+        ,a.changdi_types as changdiTypes
+        ,a.changdi_clicknum as changdiClicknum
+        ,a.changdi_content as changdiContent
+        ,a.shangxia_types as shangxiaTypes
+        ,a.changdi_delete as changdiDelete
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ChangdiView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+
+        FROM changdi  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.changdiName != '' and params.changdiName != null and params.changdiName != 'null' ">
+                and a.changdi_name like CONCAT('%',#{params.changdiName},'%')
+            </if>
+            <if test=" params.changdiUuidNumber != '' and params.changdiUuidNumber != null and params.changdiUuidNumber != 'null' ">
+                and a.changdi_uuid_number like CONCAT('%',#{params.changdiUuidNumber},'%')
+            </if>
+            <if test=" params.changdiAddress != '' and params.changdiAddress != null and params.changdiAddress != 'null' ">
+                and a.changdi_address like CONCAT('%',#{params.changdiAddress},'%')
+            </if>
+            <if test="params.changdiTypes != null and params.changdiTypes != ''">
+                and a.changdi_types = #{params.changdiTypes}
+            </if>
+            <if test="params.changdiClicknumStart != null and params.changdiClicknumStart != ''">
+                <![CDATA[  and a.changdi_clicknum >= #{params.changdiClicknumStart}   ]]>
+            </if>
+            <if test="params.changdiClicknumEnd != null and params.changdiClicknumEnd != ''">
+                <![CDATA[  and a.changdi_clicknum <= #{params.changdiClicknumEnd}   ]]>
+            </if>
+             <if test="params.changdiClicknum != null and params.changdiClicknum != ''">
+                and a.changdi_clicknum = #{params.changdiClicknum}
+             </if>
+            <if test=" params.changdiContent != '' and params.changdiContent != null and params.changdiContent != 'null' ">
+                and a.changdi_content like CONCAT('%',#{params.changdiContent},'%')
+            </if>
+            <if test="params.shangxiaTypes != null and params.shangxiaTypes != ''">
+                and a.shangxia_types = #{params.shangxiaTypes}
+            </if>
+            <if test="params.changdiDeleteStart != null and params.changdiDeleteStart != ''">
+                <![CDATA[  and a.changdi_delete >= #{params.changdiDeleteStart}   ]]>
+            </if>
+            <if test="params.changdiDeleteEnd != null and params.changdiDeleteEnd != ''">
+                <![CDATA[  and a.changdi_delete <= #{params.changdiDeleteEnd}   ]]>
+            </if>
+             <if test="params.changdiDelete != null and params.changdiDelete != ''">
+                and a.changdi_delete = #{params.changdiDelete}
+             </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>
